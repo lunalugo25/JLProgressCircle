@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "specialized JLProgressCircle.(addProgress(pieceLine : CAShapeLayer, current : CGFloat) -&gt; ()).(closure #1):JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "shouldShowFinishedAccentCircle">
+            </PersistentString>
+            <PersistentString
+               value = "progressCircleIsComplete">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.(getProgressPiece in _C78D93E188039446FACE74351D8DA4C2)(CGFloat) -&gt; CAShapeLayer:JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "total">
+            </PersistentString>
+            <PersistentString
+               value = "progressPiece.strokeStart">
+            </PersistentString>
+            <PersistentString
+               value = "progressPiece.strokeEnd">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.(getProgressPieceLine in _C78D93E188039446FACE74351D8DA4C2)(CGFloat) -&gt; CAShapeLayer:JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "total">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.animationDidStop(CAAnimation, finished : Bool) -&gt; ():JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "shouldHighligthProgress">
+            </PersistentString>
+            <PersistentString
+               value = "shouldShowAccentLine">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.(setupViews in _C78D93E188039446FACE74351D8DA4C2)() -&gt; ():JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "numberLabel">
+            </PersistentString>
+            <PersistentString
+               value = "numberLabel.center">
+            </PersistentString>
+            <PersistentString
+               value = "numberView.center">
+            </PersistentString>
+            <PersistentString
+               value = "circleWidth">
+            </PersistentString>
+            <PersistentString
+               value = "numberLabelWidth">
+            </PersistentString>
+            <PersistentString
+               value = "numberView">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.getIncreaseLineWidthAnimation(layer : CAShapeLayer) -&gt; CABasicAnimation:JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "JLProgressPiece.increaseLineWidthAnimation.rawValue">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.animationDidStart(CAAnimation) -&gt; ():JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "current">
+            </PersistentString>
+            <PersistentString
+               value = "CGFloat(current)">
+            </PersistentString>
+            <PersistentString
+               value = "shouldShowFinishedAccentCircle">
+            </PersistentString>
+            <PersistentString
+               value = "numberLabel.respondsToSelector(Selector(&quot;attributedText&quot;)">
+            </PersistentString>
+            <PersistentString
+               value = "pastProgressPiece.sublayers">
+            </PersistentString>
+            <PersistentString
+               value = "maxTotal">
+            </PersistentString>
+            <PersistentString
+               value = "shouldShowAccentLine">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.setProgress(progress : Float) -&gt; ():JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "progressPieceArray">
+            </PersistentString>
+            <PersistentString
+               value = "progressPieceView">
+            </PersistentString>
+            <PersistentString
+               value = "finished">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.setupLines() -&gt; ():JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "circleWidth">
+            </PersistentString>
+            <PersistentString
+               value = "self.layer.sublayers">
+            </PersistentString>
+            <PersistentString
+               value = "innerBackgroundPath">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.setProgress(Float) -&gt; ():JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "last.strokeEnd">
+            </PersistentString>
+            <PersistentString
+               value = "last.strokeEnd - 0.0005">
+            </PersistentString>
+            <PersistentString
+               value = "total">
+            </PersistentString>
+            <PersistentString
+               value = "(last.strokeEnd - 0.0005) * maxTotal">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.getLineMoveAnimation(layer : CAShapeLayer, progress : CGFloat) -&gt; CABasicAnimation:JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "innerBackgroundPath">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.(setupDefaults in _C78D93E188039446FACE74351D8DA4C2)() -&gt; ():JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "numberLabelWidth">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.addProgress(pieceLine : CAShapeLayer, current : CGFloat) -&gt; ():JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "shouldShowFinishedAccentCircle">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "JLProgressCircle.getInnerToOuterMoveAnimation(layer : CAShapeLayer) -&gt; CABasicAnimation:JLProgressCircle.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "numberViewPath">
+            </PersistentString>
+            <PersistentString
+               value = "JLProgressPiece.InnerToOuterMoveAnimation">
+            </PersistentString>
+            <PersistentString
+               value = "JLProgressPiece.InnerToOuterMoveAnimation.rawValue">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
