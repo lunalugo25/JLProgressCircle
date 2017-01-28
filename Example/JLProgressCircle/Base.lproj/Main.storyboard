@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina5_5" orientation="portrait">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Yev-ug-oM8">
+    <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--JLProgressCircle-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="JLProgressCircle" customModuleProvider="target" sceneMemberID="viewController">
@@ -19,30 +20,101 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gb8-sr-p4D">
-                                <rect key="frame" x="82" y="243" width="250" height="250"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Example" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pdh-yI-NLz">
+                                <rect key="frame" x="145" y="72" width="85" height="31"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="250" id="apT-cL-8Oj"/>
+                                    <constraint firstAttribute="height" constant="30.5" id="8yJ-ar-Y2O"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="22"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gb8-sr-p4D" customClass="JLProgressCircle" customModule="JLProgressCircle" customModuleProvider="target">
+                                <rect key="frame" x="36" y="153" width="303" height="303"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
                                     <constraint firstAttribute="width" secondItem="gb8-sr-p4D" secondAttribute="height" multiplier="1:1" id="en1-Qq-zLz"/>
                                 </constraints>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jcp-o5-dQr">
+                                <rect key="frame" x="36" y="607" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="44" id="Su9-IJ-leF"/>
+                                    <constraint firstAttribute="height" constant="44" id="fhL-bz-0TW"/>
+                                </constraints>
+                                <state key="normal" backgroundImage="icoPlay"/>
+                                <connections>
+                                    <action selector="play:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mbh-d1-yzM"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4lF-f6-aIO">
+                                <rect key="frame" x="165.5" y="607" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="AYN-os-3kV"/>
+                                    <constraint firstAttribute="width" constant="44" id="FMs-p1-2QW"/>
+                                </constraints>
+                                <state key="normal" backgroundImage="icoStop"/>
+                                <connections>
+                                    <action selector="stop:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Kme-jQ-XNq"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XWO-jn-5U2">
+                                <rect key="frame" x="295" y="607" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="44" id="4W2-I8-UOC"/>
+                                    <constraint firstAttribute="height" constant="44" id="baV-xh-iUw"/>
+                                </constraints>
+                                <state key="normal" image="icoEdit"/>
+                            </button>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="gb8-sr-p4D" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="SyD-mZ-1oE"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="4lF-f6-aIO" secondAttribute="bottom" constant="16" id="AD1-7I-KRW"/>
+                            <constraint firstItem="4lF-f6-aIO" firstAttribute="centerY" secondItem="XWO-jn-5U2" secondAttribute="centerY" id="It4-8v-1Hu"/>
+                            <constraint firstItem="gb8-sr-p4D" firstAttribute="top" secondItem="Pdh-yI-NLz" secondAttribute="bottom" constant="50" id="RaB-7T-Ozl"/>
+                            <constraint firstItem="Pdh-yI-NLz" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="W5C-Jw-HnB"/>
+                            <constraint firstItem="4lF-f6-aIO" firstAttribute="centerY" secondItem="Jcp-o5-dQr" secondAttribute="centerY" id="WlV-Co-8e5"/>
+                            <constraint firstItem="Jcp-o5-dQr" firstAttribute="leading" secondItem="gb8-sr-p4D" secondAttribute="leading" id="fJ7-Fh-KQn"/>
+                            <constraint firstItem="XWO-jn-5U2" firstAttribute="trailing" secondItem="gb8-sr-p4D" secondAttribute="trailing" id="fzD-3r-BdD"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="gb8-sr-p4D" secondAttribute="trailing" constant="20" id="gfX-3e-acP"/>
+                            <constraint firstItem="gb8-sr-p4D" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="20" id="jPQ-GS-kHT"/>
+                            <constraint firstItem="Pdh-yI-NLz" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="kMR-FE-ZqL"/>
+                            <constraint firstItem="4lF-f6-aIO" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="rKp-ZX-Jef"/>
                             <constraint firstItem="gb8-sr-p4D" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="uGv-aU-xDS"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" title="JLProgressCircle" id="x6Y-Ef-Wox"/>
                     <connections>
-                        <outlet property="vwCircle" destination="gb8-sr-p4D" id="36e-Bz-p1h"/>
+                        <outlet property="vwProgressCircle" destination="gb8-sr-p4D" id="45s-16-hWv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="440.57971014492756" y="248.64130434782609"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="WiJ-7K-Dz2">
+            <objects>
+                <navigationController id="Yev-ug-oM8" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="N8p-ng-ouQ">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="PMm-f1-FXi"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Cm2-96-XDg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-373" y="249"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="icoEdit" width="640" height="640"/>
+        <image name="icoPlay" width="640" height="640"/>
+        <image name="icoStop" width="640" height="640"/>
+    </resources>
 </document>

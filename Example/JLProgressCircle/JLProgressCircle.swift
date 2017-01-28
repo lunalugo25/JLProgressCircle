@@ -14,9 +14,8 @@ protocol JLProgressCircleProtocol {
     func didAnimateToProgress(circle: JLProgressCircle, progress: Float) -> Void
 }
 
-typealias JLProgressCircleProgressBlockCompletion = ( Float, Bool) -> Void
-typealias JLProgressCircleLabelFormatBlock = (Float) -> String
-typealias JLProgressCircleLabelAttributedFormatBlock = (Float) -> NSAttributedString
+typealias JLProgressCircleProgressBlockCompletion = ( Float, Float, Bool) -> Void
+typealias JLProgressCircleLabelFormatBlock = (Float, Float) -> String
 
 enum JLProgressCircleColorTransitionType {
     case gradual
@@ -127,52 +126,6 @@ extension UIColor {
         return UIColor(colorLiteralRed:138/255, green: 43/255, blue: 226/255, alpha: 1)
     }
 }
-/*
-class UILabelCount: UILabel {
-    var timer: CADisplayLink?
-    var startingValue = Float(0)
-    var destinationValue = Float(0)
-    var format: String?
-    var progress = NSTimeInterval(0)
-    var lastUpdate = NSDate.timeIntervalSinceReferenceDate()
-    
-    func countTo(endValue: Float) {
-        startingValue = currentValue()
-        destinationValue = endValue
-        
-        timer?.invalidate()
-        
-        progress = 0
-        lastUpdate = NSDate.timeIntervalSinceReferenceDate()
-        totalTime = 2.0
-        
-        if format == nil {
-            format = "%f"
-        }
-        
-        let newTimer = CADisplayLink(target: self, selector: #selector(updateValue))
-        newTimer.frameInterval = 2
-        newTimer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
-        newTimer.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: UITrackingRunLoopMode)
-        timer = newTimer
-    }
-    
-    func currentValue(timer: NSTimer) -> Float {
-        let now = NSDate.timeIntervalSinceReferenceDate()
-        progress += now - lastUpdate
-        lastUpdate = now
-        
-        if progress <= totalTime {
-            <#code#>
-        }
-        return Float(0)
-    }
-    
-    func updateValue() {
-        
-    }
-}
-*/
 
 // MARK: -
 class JLProgressCircle: UIView, CAAnimationDelegate {
@@ -180,20 +133,20 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
     var delegate: JLProgressCircleProtocol?
     var progressBlock: JLProgressCircleProgressBlockCompletion?
     var labelFormatBlock: JLProgressCircleLabelFormatBlock?
-    var labelAttributedFormatBlock: JLProgressCircleLabelAttributedFormatBlock?
 
     var shouldNumberLabelTransition = true
     var shouldShowFinishedAccentCircle = true
     var shouldShowAccentLine = true
     var shouldHighligthProgress = true
-    var isBackgroundVisible = true { didSet {self.setupProgress()} }
+    var isBackgroundVisible = true { didSet {backgroundCircle.hidden = !isBackgroundVisible} }
     
     var animationSpeed: Float = 1.0
     var accentLineColor: UIColor = .greenColor()
     var numberLabelColor: UIColor = .greenColor()
     var numberLabelTransitionColor: UIColor = .progressColor()
+    var numberFont: UIFont? { didSet {self.numberLabel.font = numberFont} }
     
-    var maxTotal: CGFloat = 100
+    var maxNumber: CGFloat = 100
     
     var transitionType: JLProgressCircleColorTransitionType = .none
 
@@ -206,7 +159,7 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
         }
     }
 
-    var circleWidth: CGFloat = 0 { didSet {self.setupProgress()} }
+    var circleWidth: CGFloat = 0 { didSet {self.setupLines()} }
     var circleBackgroundWidth: CGFloat = 0 { didSet {self.backgroundCircle.lineWidth = circleBackgroundWidth} }
     var circleInnerWidth: CGFloat = 0 { didSet {self.setupProgress()} }
     
@@ -228,34 +181,30 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
     private var numberViewPath: UIBezierPath?
     
     private var progressPieceView = UIView()
-    private var numberView = UIView()
     private var numberLabel = UILabel()
     private var numberLabelWidth: CGFloat = 0
     
     // MARK: - JLProgressCircle Initializers
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.setupDefaults()
+        self.setupInit()
     }
     
     override init(frame: CGRect) {
-        var newFrame = frame
-        let maxSize = min(newFrame.height,newFrame.width)
-        newFrame.size.height = maxSize
-        newFrame.size.width = maxSize
-        super.init(frame: newFrame)
-        self.setupDefaults()
+        super.init(frame: frame)
+        self.setupInit()
     }
     
     // MARK: - JLProgressCircle Public Methods
     func setProgress(progress: Float) {
+        notifyAnimateToProgress(progress, animationComplete: false)
         let floatProgress = CGFloat(progress)
-        if total >= maxTotal || floatProgress == total || floatProgress > maxTotal {
+        if total >= maxNumber || floatProgress == total || floatProgress > maxNumber {
             return
         }
         
         if floatProgress < total {
-            let newProgress = (floatProgress / maxTotal) + 0.0005
+            let newProgress = (floatProgress / maxNumber) + 0.0005
             for pastProgressPiece in progressPieceArray {
                 let strokeEnd = pastProgressPiece.strokeEnd
                 if newProgress < strokeEnd {
@@ -264,10 +213,10 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
             }
             
             if let last = progressPieceArray.last {
-                total = (last.strokeEnd - 0.0005) * maxTotal
+                total = (last.strokeEnd - 0.0005) * maxNumber
                 
                 if transitionType == .gradual {
-                    colorPieces(progressPieceArray, color: UIColor.transition(circleColor, transition: circleTransitionColor, progress: CGFloat(floatProgress)/maxTotal).CGColor)
+                    colorPieces(progressPieceArray, color: UIColor.transition(circleColor, transition: circleTransitionColor, progress: CGFloat(floatProgress)/maxNumber).CGColor)
                 }
             } else {
                 total = 0
@@ -277,13 +226,27 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
         addProgress(floatProgress)
     }
     
-    // MARK: - JLProgressCircle Private Methods
-    private func setupProgress() {
-        setupLines()
-        setupViews()
+    func reset() {
+        for piece in progressPieceArray {
+            piece.removeFromSuperlayer()
+        }
+        total = 0
+        setText(0)
+        finished = false
     }
     
-    private func setupDefaults() {
+    func getMaxNumber() -> Float {
+        return Float(maxNumber)
+    }
+    
+    // MARK: - JLProgressCircle Private Methods
+    private func setupInit() {
+        var newFrame = frame
+        let maxSize = min(newFrame.height,newFrame.width)
+        newFrame.size.height = maxSize
+        newFrame.size.width = maxSize
+        self.frame = newFrame
+        
         total = 0
         animationSpeed = 1.0
         
@@ -297,6 +260,11 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
         
         numberLabelWidth = self.frame.width - (2*circleWidth)
         self.setupProgress()
+    }
+    
+    private func setupProgress() {
+        setupLines()
+        setupViews()
     }
     
     private func setupLines() {
@@ -347,44 +315,37 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
         self.layer.addSublayer(circleNumber)
         self.layer.borderWidth = 1
         */
-        if isBackgroundVisible {
-            self.layer.addSublayer(backgroundCircle)
-        }
+        self.layer.addSublayer(backgroundCircle)
     }
 
     private func setupViews() {
         progressPieceView = UIView(frame: CGRect(x: 0, y: 0, width: numberLabelWidth, height: numberLabelWidth))
         self.addSubview(progressPieceView)
         
-        numberView = UIView(frame: CGRect(x: 0, y: 0, width: numberLabelWidth, height: numberLabelWidth))
-        numberView.layer.cornerRadius = numberView.frame.width / 2
-        numberView.center = self.center
-        numberView.clipsToBounds = true
-        
-        //numberLabel = UILabel(frame: CGRect(x: 0, y: 0, width: numberView.frame.width, height: 30))
         numberLabel.translatesAutoresizingMaskIntoConstraints = false
-        numberLabel.text = "0 %"
+        numberLabel.font = UIFont(name: "Avenir Book", size: 33)
+        setText(0)
         numberLabel.textAlignment = .Center
-        numberView.addSubview(numberLabel)
 
-        self.addSubview(numberView)
+        self.addSubview(numberLabel)
         
-        let horizontalConstraint = numberLabel.centerXAnchor.constraintEqualToAnchor(numberView.centerXAnchor)
-        let verticalConstraint = numberLabel.centerYAnchor.constraintEqualToAnchor(numberView.centerYAnchor)
+        let horizontalConstraint = numberLabel.centerXAnchor.constraintEqualToAnchor(self.centerXAnchor)
+        let verticalConstraint = numberLabel.centerYAnchor.constraintEqualToAnchor(self.centerYAnchor)
         NSLayoutConstraint.activateConstraints([horizontalConstraint, verticalConstraint])
     }
     
     private func addProgress(current: CGFloat) {
+        
         let progressPiece = getProgressPiece(current)
         let progressPieceLine = getProgressPieceLine(current)
         
         progressPieceView.layer.addSublayer(progressPiece)
         
-        if current >= maxTotal {
-            total = maxTotal
+        if current >= maxNumber {
+            total = maxNumber
             if !finished && shouldShowFinishedAccentCircle {
                 progressPieceLine.strokeStart = 0.0
-                progressPieceLine.strokeEnd = maxTotal + 0.001
+                progressPieceLine.strokeEnd = maxNumber + 0.001
                 finished = true
             }
         } else {
@@ -412,7 +373,7 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
     }
     
     private func addProgress(pieceLine: CAShapeLayer ,current: CGFloat) {
-        let progressCircleIsComplete = current == maxTotal
+        let progressCircleIsComplete = current == maxNumber
         
         var lineMoveAnimation = CABasicAnimation()
         var lineFadeAnimation = CABasicAnimation()
@@ -464,16 +425,25 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
         }
     }
     
+    private func setText(current: Float){
+        if labelFormatBlock != nil {
+            numberLabel.text = labelFormatBlock?(current, Float(maxNumber))
+        } else {
+            let percent = (CGFloat(current) / maxNumber) * 100
+            numberLabel.text = "\(Int(percent))%"
+        }
+    }
+    
     // MARK: - CAShapeLayer Components Initializers
     private func getProgressPiece(progress: CGFloat) -> CAShapeLayer {
         let progressPiece = CAShapeLayer()
         progressPiece.path = numberViewPath?.CGPath
-        progressPiece.strokeStart = total/maxTotal
-        progressPiece.strokeEnd = (progress / maxTotal) + 0.0005
-        progressPiece.lineWidth = CGFloat(self.frame.width/maxTotal)
+        progressPiece.strokeStart = total/maxNumber
+        progressPiece.strokeEnd = (progress / maxNumber) + 0.0005
+        progressPiece.lineWidth = CGFloat(self.frame.width/maxNumber)
         
         if transitionType == .gradual || transitionType == .incremental {
-            progressPiece.strokeColor = UIColor.transition(circleColor, transition: circleTransitionColor, progress: progress/maxTotal).CGColor
+            progressPiece.strokeColor = UIColor.transition(circleColor, transition: circleTransitionColor, progress: progress/maxNumber).CGColor
         } else {
             progressPiece.strokeColor = circleColor.CGColor
         }
@@ -487,12 +457,12 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
     private func getProgressPieceLine(progress: CGFloat) -> CAShapeLayer {
         let progressPieceLine = CAShapeLayer()
         progressPieceLine.path = innerBackgroundPath?.CGPath
-        progressPieceLine.strokeStart = total/maxTotal
-        progressPieceLine.strokeEnd = (progress / maxTotal) + 0.001
-        progressPieceLine.lineWidth = CGFloat(self.frame.width/maxTotal)
+        progressPieceLine.strokeStart = total/maxNumber
+        progressPieceLine.strokeEnd = (progress / maxNumber) + 0.001
+        progressPieceLine.lineWidth = CGFloat(self.frame.width/maxNumber)
         
         if transitionType == .gradual || transitionType == .incremental {
-            progressPieceLine.strokeColor = UIColor.transition(circleColor, transition: circleTransitionColor, progress: progress/maxTotal).CGColor
+            progressPieceLine.strokeColor = UIColor.transition(circleColor, transition: circleTransitionColor, progress: progress/maxNumber).CGColor
         } else {
             progressPieceLine.strokeColor = circleColor.CGColor
         }
@@ -510,13 +480,13 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
         increaseLineWidthAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         if isAdding {
             increaseLineWidthAnimation.beginTime = 0.0
-            increaseLineWidthAnimation.fromValue = NSNumber(integer: Int(self.frame.width / maxTotal))
+            increaseLineWidthAnimation.fromValue = NSNumber(integer: Int(self.frame.width / maxNumber))
             increaseLineWidthAnimation.toValue = circleWidth
             increaseLineWidthAnimation.setLayer(layer, name: .increaseLineWidthAnimation, current: Float(total))
         } else {
             increaseLineWidthAnimation.beginTime = 0.5
             increaseLineWidthAnimation.fromValue = circleWidth
-            increaseLineWidthAnimation.toValue = NSNumber(integer: Int(self.frame.width / maxTotal))
+            increaseLineWidthAnimation.toValue = NSNumber(integer: Int(self.frame.width / maxNumber))
             increaseLineWidthAnimation.setLayer(layer, name: .increaseLineWidthAnimation, current: Float(total))
         }
         return increaseLineWidthAnimation
@@ -555,7 +525,7 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
         if shouldHighligthProgress {
             flashStartAnimation.toValue = circleHighlightColor
         } else if transitionType == .gradual || transitionType == .incremental {
-            flashStartAnimation.toValue = UIColor.transition(circleColor, transition: circleTransitionColor, progress: progress/maxTotal)
+            flashStartAnimation.toValue = UIColor.transition(circleColor, transition: circleTransitionColor, progress: progress/maxNumber)
         } else {
             flashStartAnimation.toValue = circleColor
         }
@@ -654,32 +624,26 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
                     if transitionType == .gradual {
                         colorPieces(progressPieceArray, color: progressLayer.strokeColor!)
                     }
-                    progressPieceArray.append(progressLayer)
                     
                     if shouldNumberLabelTransition {
-                        numberLabel.textColor = UIColor.transition(numberLabelColor, transition: numberLabelTransitionColor, progress: CGFloat(current)/maxTotal)
+                        numberLabel.textColor = UIColor.transition(numberLabelColor, transition: numberLabelTransitionColor, progress: CGFloat(current)/maxNumber)
                     }
                 }
                 
-                if shouldShowAccentLine || (shouldShowFinishedAccentCircle && CGFloat(current) == maxTotal) {
+                progressPieceArray.append(progressLayer)
+                
+                if shouldShowAccentLine || (shouldShowFinishedAccentCircle && CGFloat(current) == maxNumber) {
                     addProgress(progressPieceLine, current: CGFloat(current))
                 }
                 
                 if transitionType == .gradual && self.shouldHighligthProgress {
-                    progressLayer.strokeColor = UIColor.transition(circleHighlightColor, transition: circleHighlightTransitionColor, progress: CGFloat(current)/maxTotal).CGColor
+                    progressLayer.strokeColor = UIColor.transition(circleHighlightColor, transition: circleHighlightTransitionColor, progress: CGFloat(current)/maxNumber).CGColor
                 } else {
                     progressLayer.strokeColor = shouldHighligthProgress ?circleHighlightColor.CGColor : progressLayer.strokeColor
                 }
                 
                 numberLabel.pushTransition(0.75)
-                if labelAttributedFormatBlock != nil && numberLabel.respondsToSelector(Selector("attributedText")) {
-                    numberLabel.attributedText = labelAttributedFormatBlock?(Float(current))
-                } else if labelFormatBlock != nil {
-                    numberLabel.text = labelFormatBlock?(Float(current))
-                } else {
-                    let percent = (CGFloat(current) / maxTotal) * 100
-                    numberLabel.text = "\(Int(percent)) %"
-                } 
+                setText(Float(current))
             case .flashFadeAnimation:
                 guard let current = anim.valueForKey(kCurrent) as? NSNumber else {
                     return
@@ -687,9 +651,9 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
                 progressLayer.strokeColor = circleColor.CGColor
                 if transitionType == .gradual || transitionType == .incremental {
                     if transitionType == .gradual {
-                        colorPieces(progressPieceArray, color: UIColor.transition(circleColor, transition: circleTransitionColor, progress: CGFloat(current)/maxTotal).CGColor)
+                        colorPieces(progressPieceArray, color: UIColor.transition(circleColor, transition: circleTransitionColor, progress: CGFloat(current)/maxNumber).CGColor)
                     }
-                    progressLayer.strokeColor = UIColor.transition(circleColor, transition: circleTransitionColor, progress: CGFloat(current)/maxTotal).CGColor
+                    progressLayer.strokeColor = UIColor.transition(circleColor, transition: circleTransitionColor, progress: CGFloat(current)/maxNumber).CGColor
                 }
             case .lineMoveAnimation:
                 progressLayer.path = outerBackgroundPath?.CGPath
@@ -734,7 +698,7 @@ class JLProgressCircle: UIView, CAAnimationDelegate {
     
     private func notifyAnimateToProgress(currentValue: Float, animationComplete: Bool) {
         if progressBlock != nil {
-            progressBlock?(currentValue, animationComplete)
+            progressBlock?(currentValue, Float(maxNumber), animationComplete)
         } else if delegate != nil {
             delegate?.didAnimateToProgress(self, progress: currentValue)
         }
